@@ -1,8 +1,11 @@
+from flask import Flask
+app = Flask(__name__)
 import time 
 import requests
 #import cv2
 import operator
 import numpy as np
+import operator
 #from __future__ import print_function
 
 # Display images within Jupyter
@@ -12,6 +15,7 @@ _key = 'a5b5547007d54be7aa5bb75555376661'
 _maxNumRetries = 10
 
 ##############################################################
+
 
 def processRequest( json, data, headers, params ):
 
@@ -74,10 +78,14 @@ json = { 'url': urlImage }
 data = None
 params = None
 
-result = processRequest( json, data, headers, params )
+@app.route("/")
+def hello():
+	result = processRequest( json, data, headers, params )
+	answer = max(result[0][u'scores'].iteritems(), key=operator.itemgetter(1))[0]
+	return answer
 
-if result is not None:
-    print(result)
+#if result is not None:
+#    print(result)
     # Load the original image, fetched from the URL
 #    arr = np.asarray( bytearray( requests.get( urlImage ).content ), dtype=np.uint8 )
 #    img = cv2.cvtColor( cv2.imdecode( arr, -1 ), cv2.COLOR_BGR2RGB )
@@ -86,3 +94,7 @@ if result is not None:
 #
 #    ig, ax = plt.subplots(figsize=(15, 20))
 #    ax.imshow( img )
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5435)
